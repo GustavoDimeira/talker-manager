@@ -3,11 +3,15 @@ const express = require('express');
 const router = express.Router();
 
 const readFile = require('../services/readFile');
-const getTalkerById = require('../services/functions');
+const getTalkerById = require('../services/getTalkerById');
 
 router.get('/', async (_req, res) => {
   const response = await readFile('../talker.json');
-  res.status(200).json(response);
+  if (response) {
+    res.status(200).json(response);
+  } else {
+    res.status(503).json('Algo deu errado');
+  }
 });
 
 router.get('/:id', async (req, res) => {
