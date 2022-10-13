@@ -7,4 +7,9 @@ const readFile = async (currentlyPath) => {
   return response;
 };
 
-module.exports = readFile;
+const getTalkerById = (talkers, id) => {
+  const response = talkers.find((talk) => Number(talk.id) === Number(id));
+  return response;
+};
+
+module.exports = { readFile, getTalkerById };

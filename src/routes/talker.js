@@ -2,8 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 
-const readFile = require('../services/readFile');
-const getTalkerById = require('../services/getTalkerById');
+const { readFile, getTalkerById } = require('../services/funcitions');
 
 router.get('/', async (_req, res) => {
   const response = await readFile('../talker.json');
