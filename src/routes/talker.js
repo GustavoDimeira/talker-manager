@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 const {
-  readFile, getTalkerById, writeFile,
+  readFile, writeFile, getTalkerById, delByToken,
 } = require('../services/funcitions');
 
 const {
@@ -45,6 +45,15 @@ router.post('/', tokenVal, nameVal, ageVal, talkVal, watchedAtVal, rateVal, asyn
   };
   await writeFile('../talker.json', newItem);
   res.status(201).json(newItem);
+});
+
+router.delete('/:id', tokenVal, async (req, res) => {
+  const { id } = req.params;
+  const teste = await delByToken(id);
+  if (teste) {
+    res.status(401).json({ message: 'Token não encontrado' });
+  }
+  res.status(204).json();
 });
 
 module.exports = router;
