@@ -2,7 +2,13 @@ const express = require('express');
 
 const router = express.Router();
 
-const { readFile, getTalkerById } = require('../services/funcitions');
+const {
+  readFile, getTalkerById, writeFile,
+} = require('../services/funcitions');
+
+const {
+  tokenVal, nameVal, ageVal, talkVal, watchedAtVal, rateVal,
+} = require('../services/validation');
 
 router.get('/', async (_req, res) => {
   const response = await readFile('../talker.json');
@@ -23,6 +29,22 @@ router.get('/:id', async (req, res) => {
     const failMsg = { message: 'Pessoa palestrante não encontrada' };
     res.status(404).json(failMsg);
   }
+});
+
+router.post('/', tokenVal, nameVal, ageVal, talkVal, watchedAtVal, rateVal, async (req, res) => {
+  const { name, age, talk: { watchedAt, rate } } = req.body;
+  const talkers = await readFile('../talker.json');
+  const newItem = {
+    id: talkers.length + 1,
+    name,
+    age,
+    talk: {
+      watchedAt,
+      rate,
+    },
+  };
+  await writeFile('../talker.json', newItem);
+  res.status(201).json(newItem);
 });
 
 module.exports = router;

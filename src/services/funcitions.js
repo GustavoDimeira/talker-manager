@@ -12,4 +12,10 @@ const getTalkerById = (talkers, id) => {
   return response;
 };
 
-module.exports = { readFile, getTalkerById };
+const writeFile = async (currentlyPath, newItem) => {
+  const file = await readFile(currentlyPath);
+  const updated = JSON.stringify([...file, newItem]);
+  await fs.writeFile('./src/talker.json', updated);
+};
+
+module.exports = { readFile, getTalkerById, writeFile };
