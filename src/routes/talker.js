@@ -5,7 +5,7 @@ const router = express.Router();
 const path = '../talker.json';
 
 const {
-  readFile, writeFile, getTalkerById, delByToken, edit,
+  readFile, writeFile, getTalkerById, delByToken, editTalker, findByName,
 } = require('../services/funcitions');
 
 const {
@@ -19,6 +19,12 @@ router.get('/', async (_req, res) => {
   } else {
     res.status(503).json('Algo deu errado');
   }
+});
+
+router.get('/search', tokenVal, async (req, res) => {
+  const { q } = req.query;
+  const talkers = await findByName(q);
+  res.status(200).json(talkers);
 });
 
 router.get('/:id', async (req, res) => {
@@ -59,8 +65,7 @@ router.delete('/:id', tokenVal, async (req, res) => {
 });
 
 router.put('/:id', tokenVal, nameVal, ageVal, talkVal, watchedAtVal, rateVal, async (req, res) => {
-  const newTalker = await edit(req);
-  console.log(newTalker);
+  const newTalker = await editTalker(req);
   res.status(200).json(newTalker);
 });
 

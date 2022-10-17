@@ -20,17 +20,11 @@ const getTalkerById = (talkers, id) => {
   return response;
 };
 
-const edit = async (req) => {
+const editTalker = async (req) => {
   const { name, age, talk: { watchedAt, rate } } = req.body;
   const { id } = req.params;
     const newItem = {
-      id: Number(id),
-      name,
-      age: Number(age),
-      talk: {
-        watchedAt,
-        rate: Number(rate),
-      },
+      id: Number(id), name, age: Number(age), talk: { watchedAt, rate: Number(rate) },
     };
     const file = await readFile(mainFile);
     const old = getTalkerById(file, id);
@@ -52,4 +46,14 @@ const delByToken = async (id) => {
   return true;
 };
 
-module.exports = { readFile, writeFile, getTalkerById, delByToken, edit };
+const findByName = async (query) => {
+  const file = await readFile(mainFile);
+  const filterd = file.filter((talker) => {
+    const { name } = talker;
+    return (name.toUpperCase().includes(query));
+  });
+  JSON.stringify(filterd);
+  return filterd;
+};
+
+module.exports = { readFile, writeFile, getTalkerById, delByToken, editTalker, findByName };
