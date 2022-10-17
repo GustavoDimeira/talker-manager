@@ -5,7 +5,7 @@ const router = express.Router();
 const path = '../talker.json';
 
 const {
-  readFile, writeFile, getTalkerById, delByToken,
+  readFile, writeFile, getTalkerById, delByToken, edit,
 } = require('../services/funcitions');
 
 const {
@@ -52,19 +52,16 @@ router.post('/', tokenVal, nameVal, ageVal, talkVal, watchedAtVal, rateVal, asyn
 router.delete('/:id', tokenVal, async (req, res) => {
   const { id } = req.params;
   const teste = await delByToken(id);
-  if (teste) {
+  if (!teste) {
     res.status(401).json({ message: 'Token não encontrado' });
   }
   res.status(204).json();
 });
 
 router.put('/:id', tokenVal, nameVal, ageVal, talkVal, watchedAtVal, rateVal, async (req, res) => {
-  const { id } = req.params;
-  const teste = await delByToken(id, true, req);
-  if (teste) {
-    res.status(401).json({ message: 'Token não encontrado' });
-  }
-  res.status(200).json();
+  const newTalker = await edit(req);
+  console.log(newTalker);
+  res.status(200).json(newTalker);
 });
 
 module.exports = router;

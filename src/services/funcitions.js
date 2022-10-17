@@ -1,3 +1,5 @@
+const mainFile = '../talker.json';
+
 const path = require('path');
 const fs = require('fs').promises;
 
@@ -18,34 +20,36 @@ const getTalkerById = (talkers, id) => {
   return response;
 };
 
-const addNew = async (req, file, i, ida) => {
+const edit = async (req) => {
   const { name, age, talk: { watchedAt, rate } } = req.body;
-  const id = Number(ida);
+  const { id } = req.params;
     const newItem = {
+      id: Number(id),
       name,
-      id,
-      age,
+      age: Number(age),
       talk: {
         watchedAt,
-        rate,
+        rate: Number(rate),
       },
     };
-    await fs.writeFile('./src/talker.json', JSON.stringify([...file, newItem]));
+    const file = await readFile(mainFile);
+    const old = getTalkerById(file, id);
+    const i = file.indexOf(old);
+    file.splice(i, 1, newItem);
+    await fs.writeFile('./src/talker.json', JSON.stringify(file));
+    return (newItem);
 };
 
-const delByToken = async (id, toUpdate, req) => {
-  const file = await readFile('../talker.json');
+const delByToken = async (id) => {
+  const file = await readFile(mainFile);
   const toRemove = getTalkerById(file, id);
   if (!toRemove) {
-    return true;
+    return false;
   }
   const i = file.indexOf(toRemove);
-  if (!toUpdate) {
-    file.splice(i, 1);
-    await fs.writeFile('./src/talker.json', JSON.stringify(file));
-  } else {
-    addNew(req, file, i, id);
-  }
+  file.splice(i, 1);
+  await fs.writeFile('./src/talker.json', JSON.stringify(file));
+  return true;
 };
 
-module.exports = { readFile, writeFile, getTalkerById, delByToken };
+module.exports = { readFile, writeFile, getTalkerById, delByToken, edit };
